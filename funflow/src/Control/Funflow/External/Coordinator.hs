@@ -119,8 +119,8 @@ class Coordinator c where
 -- TH Splices
 
 makeLenses ''ExecutionInfo
-makeStore ''TaskStatus
 makeStore ''ExecutionInfo
+makeStore ''TaskStatus
 makeStore ''TaskInfo
 
 -- Derived functionality

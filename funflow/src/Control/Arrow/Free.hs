@@ -133,11 +133,11 @@ newtype Choice eff a b = Choice {
 }
 
 instance Category (Choice eff) where
-  id = Choice $ const id
+  id = Choice $ \_ -> id
   Choice f . Choice g = Choice $ \x -> f x . g x
 
 instance Arrow (Choice eff) where
-  arr a = Choice $ const $ arr a
+  arr a = Choice $ \_ -> arr a
   first (Choice a) = Choice $ \f -> first (a f)
   second (Choice a) = Choice $ \f -> second (a f)
   (Choice a) *** (Choice b) = Choice $ \f -> a f *** b f
@@ -199,11 +199,11 @@ newtype ErrorChoice ex eff a b = ErrorChoice {
 }
 
 instance Category (ErrorChoice ex eff) where
-  id = ErrorChoice $ const id
+  id = ErrorChoice $ \_ -> id
   ErrorChoice f . ErrorChoice g = ErrorChoice $ \x -> f x . g x
 
 instance Arrow (ErrorChoice ex eff) where
-  arr a = ErrorChoice $ const $ arr a
+  arr a = ErrorChoice $ \_ -> arr a
   first (ErrorChoice a) = ErrorChoice $ \f -> first (a f)
   second (ErrorChoice a) = ErrorChoice $ \f -> second (a f)
   (ErrorChoice a) *** (ErrorChoice b) = ErrorChoice $ \f -> a f *** b f
