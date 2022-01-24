@@ -49,6 +49,7 @@ module Control.Funflow.ContentHashable
   ) where
 
 
+import           Data.Bifunctor                   (first)
 import           Control.Exception.Safe           (catchJust)
 import           Control.Funflow.Orphans          ()
 import           Control.Monad                    (foldM, mzero, (>=>))
@@ -58,6 +59,8 @@ import           Crypto.Hash                      (Context, Digest, SHA256,
                                                    hashFinalize, hashInit,
                                                    hashUpdate)
 import qualified Data.Aeson                       as Aeson
+import qualified Data.Aeson.Key                   as K
+import qualified Data.Aeson.KeyMap                as KM
 import qualified Data.Aeson.Types                 as Aeson
 import           Data.Bits                        (shiftL)
 import           Data.ByteArray                   (Bytes, MemView (MemView),
@@ -354,6 +357,13 @@ instance (Typeable k, Typeable v, ContentHashable m k, ContentHashable m v)
     flip contentHashUpdate_fingerprint m
     -- XXX: The order of the list is unspecified.
     >=> flip contentHashUpdate (HashMap.toList m) $ ctx
+
+instance (Typeable v, ContentHashable m v)
+  => ContentHashable m (KM.KeyMap v) where
+  contentHashUpdate ctx m =
+    flip contentHashUpdate_fingerprint m
+    -- XXX: The order of the list is unspecified.
+    >=> flip contentHashUpdate (map (first K.toText) $ KM.toList m) $ ctx
 
 instance (Typeable v, ContentHashable m v)
   => ContentHashable m (HashSet.HashSet v) where
